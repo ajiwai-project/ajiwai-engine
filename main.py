@@ -1,12 +1,12 @@
 from flask import Flask
 
-app = Flask(__name__)
+from controllers import sake, test
 
-@app.route("/")
-def hello():
-    name = "hello world"
-    return name
+
+app = Flask(__name__)
+app.register_blueprint(test.app, url_prefix='/api')
+app.register_blueprint(sake.app, url_prefix='/api')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
