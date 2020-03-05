@@ -1,4 +1,8 @@
 # AJIWAI - engine application
+## 環境
+* pipenv: version 2018.11.26
+* python: 3.7系
+
 ## 初期設定
 ### pipenvのインストール
 pipenvをインストールする。
