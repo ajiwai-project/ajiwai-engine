@@ -1,6 +1,6 @@
 from flask import Flask
 
-from controllers import brand_controller
+from application.controllers import brand_controller
 
 
 app = Flask(__name__)

@@ -3,8 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from models.review import Review
-from models.brand import Brand
+from domain.models.review import Review
+from domain.models.brand import Brand
 
 HOST = 'https://www.saketime.jp'
 

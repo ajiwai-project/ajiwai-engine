@@ -1,8 +1,8 @@
 from pprint import pprint
 
 from scraping.brands_scr import get_brands_and_reviews_from_saketime
-from repositories.brand_repository import post_brand
-from repositories.review_repository import post_review
+from infrastructure.repositories.brand_repository import post_brand
+from infrastructure.repositories.review_repository import post_review
 
 
 if __name__ == '__main__':

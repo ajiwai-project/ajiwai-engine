@@ -1,4 +1,4 @@
-from application import db
+from config import db
 
 brands_ref = db.collection('brands')
 

@@ -1,4 +1,4 @@
-from application import db
+from config import db
 
 reviews_ref = db.collection('reviews')
 

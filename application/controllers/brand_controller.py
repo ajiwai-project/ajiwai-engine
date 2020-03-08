@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_restful import abort, Resource, Api
 
-from application import db
+from config import db
 
 app = Blueprint('brand', __name__)
 api = Api(app)
