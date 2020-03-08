@@ -12,7 +12,7 @@ HOST = 'https://www.saketime.jp'
 def get_brands_and_reviews_from_saketime():
     brands_reviews_map = {}
 
-    for idx in tqdm(range(1, 3)):
+    for idx in tqdm(range(1, 51)):
         URL = HOST + '/brands/' + str(idx)
         soup = BeautifulSoup(requests.get(URL).content, 'lxml')
         try:
