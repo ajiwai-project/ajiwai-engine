@@ -4,9 +4,15 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+tqdm = "*"
 
 [packages]
 flask = "*"
+flask-restful = "*"
+firebase-admin = "*"
+requests = "*"
+beautifulsoup4 = "*"
+lxml = "*"
 
 [requires]
 python_version = "3.7"

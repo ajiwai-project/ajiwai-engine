@@ -1,12 +1,11 @@
 from flask import Flask
 
-app = Flask(__name__)
+from application.controllers import brand_controller
 
-@app.route("/")
-def hello():
-    name = "hello world"
-    return name
+
+app = Flask(__name__)
+app.register_blueprint(brand_controller.app, url_prefix='/api')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
