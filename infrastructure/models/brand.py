@@ -1,5 +1,5 @@
 
-from domain.models.review import Review
+from infrastructure.models.review import Review
 
 
 class Brand:
