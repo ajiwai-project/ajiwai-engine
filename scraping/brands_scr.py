@@ -22,7 +22,7 @@ def get_brands_and_reviews_from_saketime():
 
             # メーカー名
             brand_info_dom = brand_header_dom.find('p', class_='brandinfo')
-            brand_prefecture = brand_info_dom.find(class_='pref_link').string
+            brand_prefecture = brand_info_dom.find(class_='pref_link').string.strip('\n').strip()
             brand_maker = brand_info_dom.find(href='#maker').string
 
             review_num_dom = brand_header_dom.find('p', class_='review_num')
