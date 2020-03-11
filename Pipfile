@@ -13,6 +13,10 @@ firebase-admin = "*"
 requests = "*"
 beautifulsoup4 = "*"
 lxml = "*"
+torchtext = "*"
+torch = "*"
+torchvision = "*"
+janome = "*"
 
 [requires]
 python_version = "3.7"
