@@ -2,9 +2,8 @@ from config import db
 
 brands_ref = db.collection('brands')
 
-def post_brand(brand):
+def save_brand(brand):
     return brands_ref.add(brand.parse())
 
-
-def get_brands():
+def find_brands():
     pass
