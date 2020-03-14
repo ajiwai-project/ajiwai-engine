@@ -1,15 +1,7 @@
-from json import loads, load
+from json import load
 import argparse
-import torch
-import torchtext
-from torchtext import data, datasets
-from torchtext.vocab import GloVe
-from janome.tokenizer import Tokenizer
 import pandas as pd
 from functools import reduce
-
-from pprint import pprint
-import sys
 
 
 def parse_arguments():
@@ -37,7 +29,6 @@ def cleaning(text):
     return text
 
 
-j_t = Tokenizer()
 def tokenizer(sentence):
     return [tok for tok in j_t.tokenize(sentence, wakati=True)]
 
