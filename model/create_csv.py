@@ -14,9 +14,9 @@ import sys
 
 def parse_arguments():
     p = argparse.ArgumentParser(description='Hyperparams')
-    p.add_argument('-f', type=str, default='dump.json',
+    p.add_argument('-f', type=str, default='assets/dump.json',
                    help='name of json file')
-    p.add_argument('-o', type=str, default='output.csv',
+    p.add_argument('-o', type=str, default='assets/output.csv',
                    help='name of output file')
     return p.parse_args()
 
