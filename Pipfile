@@ -17,6 +17,8 @@ torchtext = "*"
 torch = "*"
 torchvision = "*"
 janome = "*"
+numpy = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.7"
