@@ -134,3 +134,6 @@ dmypy.json
 
 # firebase
 serviceAccount.json
+
+# mac
+.DS_Store
