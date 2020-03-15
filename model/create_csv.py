@@ -40,8 +40,21 @@ def load_and_cleaning(json):
     return reviews
 
 
+def delete_symbols(df):
+    df['review'] = df['review'].str.replace('\d+年', '', regex=True)
+    df['review'] = df['review'].str.replace('\d+月', '', regex=True)
+    df['review'] = df['review'].str.replace('\d+日', '', regex=True)
+    df['review'] = df['review'].str.replace('\d+', '0', regex=True)
+    for symbol in open('assets/stop_symbols.txt', 'r'):
+        symbol = symbol.replace('\n', '')
+        df['review'] = df['review'].str.replace(symbol, '')
+    return df
+
+
 if __name__ == '__main__':
     args = parse_arguments()
     reviews_json = load_and_cleaning(args.f)
     reviews_df = json_to_data_frame(reviews_json)
+    reviews_df = delete_symbols(reviews_df)
+
     reviews_df.to_csv(args.o, header=False, index=False)
