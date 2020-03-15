@@ -1,7 +1,6 @@
 from json import load
 import argparse
 import pandas as pd
-from functools import reduce
 
 
 def parse_arguments():
@@ -12,39 +11,18 @@ def parse_arguments():
                    help='name of output file')
     return p.parse_args()
 
-def flatten(list):
-    return reduce(lambda a, b: a + b, list)
-
-def cleaning(text):
-    text = text.replace('\r', '')
-    text = text.replace('\u3000', '')
-    text = text.replace('‼️', '').replace('❗', '').replace('❓️', '').replace('♨️', '').replace('✨', '')
-    text = text.replace('(', '').replace(')', '')
-    text = text.replace('^', '').replace('*', '').replace('_', '').replace('▽', '')
-    text = text.replace('o', '').replace('○', '').replace('■', '').replace('-', '')
-    text = text.replace('´', '').replace('`', '').replace('◒', '').replace('~', '')
-    text = text.replace('✧', '').replace('•́', '').replace('•̀', '').replace('∀', '')
-    text = text.replace('!', '').replace('•́', '').replace('•̀', '').replace('∀', '')
-    text = text.replace(' ', '')
-    return text
-
-
-def tokenizer(sentence):
-    return [tok for tok in j_t.tokenize(sentence, wakati=True)]
 
 def json_to_data_frame(json):
     data_frame = []
     for review in json:
         for value in review.values():
             raw_sentences = value['text']
-            sentences = raw_sentences.split('\n')
-            sentences = [sentence.split('。') for sentence in sentences]
-            sentences = flatten(sentences)
-            for sentence in sentences:
-                data_frame.append([sentence, value['brand_id']])
+            sentences = raw_sentences.replace('\r\n', '')
+            data_frame.append([sentences, value['brand_id']])
     data_frame = [data for data in data_frame if len(data[0]) != 0]
     df = pd.DataFrame(data_frame, columns=['review', 'brand_id'])
     return df
+
 
 def load_and_cleaning(json):
     f = open(json, 'r')
@@ -54,7 +32,7 @@ def load_and_cleaning(json):
             item = [item for item in review.items()]
             review_id = item[0][0]
             review_obj = item[0][1]
-            reviews[idx][review_id]['text'] = cleaning(review_obj['text'])
+            reviews[idx][review_id]['text'] = review_obj['text']
         except KeyError:
             print('error')
             sys.exit()
@@ -66,4 +44,4 @@ if __name__ == '__main__':
     args = parse_arguments()
     reviews_json = load_and_cleaning(args.f)
     reviews_df = json_to_data_frame(reviews_json)
-    reviews_df.to_csv(args.o)
+    reviews_df.to_csv(args.o, header=False, index=False)
