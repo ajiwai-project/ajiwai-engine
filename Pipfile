@@ -19,6 +19,8 @@ torchvision = "*"
 janome = "*"
 numpy = "*"
 pandas = "*"
+transformers = "*"
+mecab-python3 = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,25 +1,23 @@
 import torch
+import torch.nn as nn
+import torch.optim as optim
 import torchtext
 from torchtext import data, datasets
 from torchtext.vocab import GloVe
-from janome.tokenizer import Tokenizer
-from pprint import pprint
-import sys
+from transformers import BertJapaneseTokenizer, BertForSequenceClassification
 
 from stop_words import create_stopwords
+from pprint import pprint
 
-j_t = Tokenizer()
-batch_size = 5
-
-
-def tokenizer(text):
-    return [tok.base_form for tok in j_t.tokenize(text) if tok.part_of_speech not in ['助詞', '記号']]
-
+batch_size = 32
 
 if __name__ == '__main__':
     stop_words = create_stopwords('assets/stop_words.txt')
-    TEXT = data.Field(sequential=True, tokenize=tokenizer,
-                      stop_words=stop_words)
+    tokenizer = BertJapaneseTokenizer.from_pretrained(
+        'bert-base-japanese-whole-word-masking')
+
+    TEXT = data.Field(
+        sequential=True, tokenize=tokenizer.tokenize, stop_words=stop_words)
     LABEL = data.Field(sequential=False)
 
     train = data.TabularDataset(
@@ -38,4 +36,19 @@ if __name__ == '__main__':
     )
 
     # TODO
-    pprint(TEXT.vocab.itos)
+    print(len(LABEL.vocab))
+    batch = next(iter(train_iter))
+    model = BertForSequenceClassification.from_pretrained(
+        'NICT_BERT-base_JapaneseWikipedia_100K', num_labels=len(LABEL.vocab))
+
+    optimizer = optim.Adam([
+        {'params': model.bert.encoder.layer[-1].parameters(), 'lr': 5e-5},
+        {'params': model.classifier.parameters(), 'lr': 5e-5}
+    ], betas=(0.9, 0.999))
+    criterion = nn.CrossEntropyLoss()
+
+    optimizer.zero_grad()
+
+    model.train()
+    loss, logit = model(input_ids=batch.Text, labels=batch.Label)
+    print(loss, logit)

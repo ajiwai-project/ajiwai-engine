@@ -2,6 +2,7 @@ from json import load
 import argparse
 import pandas as pd
 
+import sys
 
 def parse_arguments():
     p = argparse.ArgumentParser(description='Hyperparams')
@@ -36,7 +37,6 @@ def load_and_cleaning(json):
         except KeyError:
             print('error')
             sys.exit()
-
     return reviews
 
 
