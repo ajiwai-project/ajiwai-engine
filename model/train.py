@@ -5,11 +5,12 @@ import torchtext
 from torchtext import data, datasets
 from torchtext.vocab import GloVe
 from transformers import BertJapaneseTokenizer, BertForSequenceClassification
-
+from tqdm import tqdm
+from datetime import datetime
 from stop_words import create_stopwords
 from pprint import pprint
 
-batch_size = 32
+batch_size = 8
 
 if __name__ == '__main__':
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -47,12 +48,12 @@ if __name__ == '__main__':
     ], betas=(0.9, 0.999))
     criterion = nn.CrossEntropyLoss()
 
-    for epoch in range(20):
+    for epoch in tqdm(range(20)):
         epoch_loss = 0.0
         for batch in train_iter:
-
             inputs, labels = batch.Text, batch.Label
             inputs, labels = inputs.to(device), labels.to(device)
+
             optimizer.zero_grad()
 
             loss, logit = model(input_ids=inputs, labels=labels)
@@ -60,4 +61,5 @@ if __name__ == '__main__':
             epoch_loss += loss.data
             optimizer.step()
 
-        print('epoch' + epoch+1 + ' loss: ' + epoch_loss)
+        torch.save(model.state_dict(), './params/model_{}.pth'.format(datetime.now().strftime('%Y%m%d%H%M%S')))
+        print('epoch' + str(epoch+1) + ' loss: ' + str(epoch_loss))
