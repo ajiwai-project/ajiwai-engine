@@ -12,12 +12,16 @@ from pprint import pprint
 batch_size = 32
 
 if __name__ == '__main__':
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     stop_words = create_stopwords('assets/stop_words.txt')
     tokenizer = BertJapaneseTokenizer.from_pretrained(
         'bert-base-japanese-whole-word-masking')
 
     TEXT = data.Field(
-        sequential=True, tokenize=tokenizer.tokenize, stop_words=stop_words)
+        sequential=True,
+        tokenize=tokenizer.tokenize,
+        stop_words=stop_words,
+        batch_first=True)
     LABEL = data.Field(sequential=False)
 
     train = data.TabularDataset(
@@ -35,20 +39,25 @@ if __name__ == '__main__':
         repeat=False
     )
 
-    # TODO
-    print(len(LABEL.vocab))
-    batch = next(iter(train_iter))
     model = BertForSequenceClassification.from_pretrained(
-        'NICT_BERT-base_JapaneseWikipedia_100K', num_labels=len(LABEL.vocab))
-
+        'NICT_BERT-base_JapaneseWikipedia_100K', num_labels=len(LABEL.vocab)).to(device)
     optimizer = optim.Adam([
         {'params': model.bert.encoder.layer[-1].parameters(), 'lr': 5e-5},
         {'params': model.classifier.parameters(), 'lr': 5e-5}
     ], betas=(0.9, 0.999))
     criterion = nn.CrossEntropyLoss()
 
-    optimizer.zero_grad()
+    for epoch in range(20):
+        epoch_loss = 0.0
+        for batch in train_iter:
 
-    model.train()
-    loss, logit = model(input_ids=batch.Text, labels=batch.Label)
-    print(loss, logit)
+            inputs, labels = batch.Text, batch.Label
+            inputs, labels = inputs.to(device), labels.to(device)
+            optimizer.zero_grad()
+
+            loss, logit = model(input_ids=inputs, labels=labels)
+            loss.backward()
+            epoch_loss += loss.data
+            optimizer.step()
+
+        print('epoch' + epoch+1 + ' loss: ' + epoch_loss)
