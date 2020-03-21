@@ -3,14 +3,12 @@ import torch.nn as nn
 import torch.optim as optim
 import torchtext
 from torchtext import data
-from transformers import BertJapaneseTokenizer, BertForSequenceClassification
+from transformers import BertForSequenceClassification
 from datetime import datetime
 from tqdm import tqdm
 
 from stop_words import create_stopwords
-
-
-tokenizer = BertJapaneseTokenizer.from_pretrained('bert-base-japanese-whole-word-masking')    
+from dict import Dict
 
 class Model:
     def __init__(self, num_labels):
@@ -23,17 +21,15 @@ class Model:
         ], betas=(0.9, 0.999))
         self.criterion = nn.CrossEntropyLoss()
 
-    def predict(self, text):
-        tokenized_text = tokenizer.tokenize(text)
-        indexed_text = [TEXT.vocab.stoi[w] for w in tokenized_text]
+    def predict(self, text, dict):
+        tokenized_text = dict.tokenizer.tokenize(text)
+        indexed_text = [dict.TEXT.vocab.stoi[w] for w in tokenized_text]
         tensor_text = torch.tensor([indexed_text]).to(self.device)
 
         self.model.load_state_dict(torch.load('params/model_20200320151030.pth'))
         self.model.eval()
         outputs = self.model(tensor_text)
-        print(outputs[0])
-        print(torch.max(outputs[0], 1))
-        print(LABEL.vocab.itos)
+        return outputs
 
 
     def train(self, train_iter, epoch_num=10):
@@ -55,25 +51,13 @@ class Model:
             torch.save(self.model.state_dict(), './params/model_{}.pth'.format(datetime.now().strftime('%Y%m%d%H%M%S')))
             print('epoch' + str(epoch+1) + ' loss: ' + str(epoch_loss))
       
+
 if __name__ == "__main__":
     batch_size = 4
     stop_words = create_stopwords('assets/stop_words.txt')
 
-    TEXT = data.Field(
-        sequential=True,
-        tokenize=tokenizer.tokenize,
-        stop_words=stop_words,
-        batch_first=True)
-    LABEL = data.Field(sequential=False)
+    dict = Dict()
+    dict.make()
 
-    train = data.TabularDataset(
-        path='assets/output.csv',
-        format='csv',
-        fields=[('Text', TEXT), ('Label', LABEL)]
-    )
-
-    TEXT.build_vocab(train)
-    LABEL.build_vocab(train)
-
-    model = Model(len(LABEL.vocab))
-    model.predict('私は獺祭が好きです。')
+    model = Model(len(dict.LABEL.vocab))
+    model.predict('辛口でフルーティ', dict)
