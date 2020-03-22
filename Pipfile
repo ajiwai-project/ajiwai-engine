@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 tqdm = "*"
+autopep8 = "*"
 
 [packages]
 flask = "*"

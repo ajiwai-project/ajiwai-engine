@@ -2,12 +2,12 @@ import torchtext
 from torchtext import data
 from transformers import BertJapaneseTokenizer
 
-from stop_words import create_stopwords
+from model.stop_words import create_stopwords
 
 
 class Dict:
     def __init__(self):
-        stop_words = create_stopwords('assets/stop_words.txt')
+        stop_words = create_stopwords('model/assets/stop_words.txt')
         self.tokenizer = BertJapaneseTokenizer.from_pretrained('bert-base-japanese-whole-word-masking')
         self.TEXT = data.Field(
             sequential=True,

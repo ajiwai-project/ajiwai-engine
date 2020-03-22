@@ -21,7 +21,7 @@ def create_stopwords(file_path):
 
 
 if __name__ == '__main__':
-    path = "assets/stop_words.txt"
+    path = "model/assets/stop_words.txt"
     download_stopwords(path)
     stop_words = create_stopwords(path)
     print(stop_words)
