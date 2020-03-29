@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 tqdm = "*"
+autopep8 = "*"
 
 [packages]
 flask = "*"
@@ -13,6 +14,14 @@ firebase-admin = "*"
 requests = "*"
 beautifulsoup4 = "*"
 lxml = "*"
+torchtext = "*"
+torch = "*"
+torchvision = "*"
+janome = "*"
+numpy = "*"
+pandas = "*"
+transformers = "*"
+mecab-python3 = "*"
 
 [requires]
 python_version = "3.7"

@@ -134,3 +134,10 @@ dmypy.json
 
 # firebase
 serviceAccount.json
+
+# mac
+.DS_Store
+
+# other
+model/params
+model/NICT_BERT-base_JapaneseWikipedia_100K

@@ -3,8 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from infrastructure.models.review import Review
-from infrastructure.models.brand import Brand
+from infrastructure.dao.review import Review
+from infrastructure.dao.brand import Brand
 
 HOST = 'https://www.saketime.jp'
 
