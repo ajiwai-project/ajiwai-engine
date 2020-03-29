@@ -3,8 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from infrastructure.dao.review import Review
-from infrastructure.dao.brand import Brand
+from scraping.review import Review
+from scraping.brand import Brand
 
 HOST = 'https://www.saketime.jp'
 
@@ -12,7 +12,9 @@ HOST = 'https://www.saketime.jp'
 def get_brands_and_reviews_from_saketime():
     brands_reviews_map = {}
 
-    for idx in tqdm(range(1, 51)):
+    progress = tqdm(range(1, 4))
+    progress.set_description('Scraping')
+    for idx in progress:
         URL = HOST + '/brands/' + str(idx)
         soup = BeautifulSoup(requests.get(URL).content, 'lxml')
         try:
