@@ -7,21 +7,19 @@ from pprint import pprint
 
 from model.model import Model
 from model.dict import Dict
-from infrastructure.dao.review_dao import ReviewDao
+from infrastructure.repositories.review_repository import ReviewRepository
 
 
 class ReviewService:
 
     def __init__(self):
         self.dict = Dict()
-        self.dict.make('model/assets/output.csv')
-        self.review_dao = ReviewDao()
+        self.dict.init()
+        self.model = Model(len(self.dict.LABEL.vocab))
+        self.review_repository = ReviewRepository()
 
     def get_reviews(self):
-        return self.review_dao.find_all()
-        
+        return self.review_repository.find_all()
 
     def train(self):
-        reviews = self.dict.init()
         pprint(reviews)
-

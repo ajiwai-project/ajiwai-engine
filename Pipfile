@@ -22,6 +22,7 @@ numpy = "*"
 pandas = "*"
 transformers = "*"
 mecab-python3 = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.7"

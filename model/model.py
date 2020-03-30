@@ -58,7 +58,7 @@ if __name__ == "__main__":
     stop_words = create_stopwords('model/assets/stop_words.txt')
 
     dict = Dict()
-    dict.make()
+    dict.init()
 
     model = Model(len(dict.LABEL.vocab))
     model.predict('辛口でフルーティ', dict)

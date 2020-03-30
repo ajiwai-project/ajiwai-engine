@@ -14,7 +14,7 @@ class BrandService:
 
     def __init__(self):
         self.dict = Dict()
-        self.dict.make('model/assets/output.csv')
+        self.dict.init()
         self.model = Model(len(self.dict.LABEL.vocab))
         self.brand_dao = BrandDao()
 

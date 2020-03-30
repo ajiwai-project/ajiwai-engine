@@ -1,11 +1,10 @@
 from config import db
-
-reviews_ref = db.collection('reviews')
-
-
-def save_review(brand_id, review):
-    return reviews_ref.add(review.parse(brand_id))
+from infrastructure.dao.review_dao import ReviewDao
 
 
-def find_reviews():
-    pass
+class ReviewRepository:
+    def __init__(self):
+        self.review_dao = ReviewDao()
+
+    def find_all(self):
+        return self.review_dao.find_all()
