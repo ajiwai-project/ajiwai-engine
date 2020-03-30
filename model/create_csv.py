@@ -1,8 +1,11 @@
 from json import load
 import argparse
 import pandas as pd
-
 import sys
+import torchtext
+from torchtext.data import Field, Dataset, Example, BucketIterator
+from transformers import BertJapaneseTokenizer
+
 
 def parse_arguments():
     p = argparse.ArgumentParser(description='Hyperparams')
@@ -51,10 +54,78 @@ def delete_symbols(df):
     return df
 
 
+class DataFrameDataset(Dataset):
+    """
+    pandas DataFrameからtorchtextのdatasetつくるやつ
+    https://stackoverflow.com/questions/52602071/dataframe-as-datasource-in-torchtext
+    """
+
+    def __init__(self, examples, fields, filter_pred=None):
+        """
+         Create a dataset from a pandas dataframe of examples and Fields
+         Arguments:
+             examples pd.DataFrame: DataFrame of examples
+             fields {str: Field}: The Fields to use in this tuple. The
+                 string is a field name, and the Field is the associated field.
+             filter_pred (callable or None): use only exanples for which
+                 filter_pred(example) is true, or use all examples if None.
+                 Default is None
+        """
+        self.examples = examples.apply(
+            SeriesExample.fromSeries, args=(fields,), axis=1).tolist()
+        if filter_pred is not None:
+            self.examples = filter(filter_pred, self.examples)
+        self.fields = dict(fields)
+        # Unpack field tuples
+        for n, f in list(self.fields.items()):
+            if isinstance(n, tuple):
+                self.fields.update(zip(n, f))
+                del self.fields[n]
+
+
+class SeriesExample(Example):
+    """Class to convert a pandas Series to an Example"""
+    @classmethod
+    def fromSeries(cls, data, fields):
+        return cls.fromdict(data.to_dict(), fields)
+
+    @classmethod
+    def fromdict(cls, data, fields):
+        ex = cls()
+
+        for key, field in fields.items():
+            if key not in data:
+                raise ValueError("Specified key {} was not found in "
+                                 "the input data".format(key))
+            if field is not None:
+                setattr(ex, key, field.preprocess(data[key]))
+            else:
+                setattr(ex, key, data[key])
+        return ex
+
+
 if __name__ == '__main__':
     args = parse_arguments()
     reviews_json = load_and_cleaning(args.f)
     reviews_df = json_to_data_frame(reviews_json)
     reviews_df = delete_symbols(reviews_df)
 
-    reviews_df.to_csv(args.o, header=False, index=False)
+    tokenizer = BertJapaneseTokenizer.from_pretrained('bert-base-japanese-whole-word-masking')
+
+    TEXT = Field(sequential=True, batch_first=True, tokenize=tokenizer.tokenize)
+    LABEL = Field(sequential=False)
+
+    train_ds = DataFrameDataset(reviews_df, fields={'review': TEXT, 'brand_id': LABEL})
+
+    TEXT.build_vocab(train_ds)
+    LABEL.build_vocab(train_ds)
+
+    train_iter = BucketIterator(
+        dataset=train_ds,
+        batch_size=4,
+        repeat=False
+    )
+
+    for batch in train_iter:
+        print(batch.review)
+    # reviews_df.to_csv(args.o, header=False, index=False)

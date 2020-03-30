@@ -17,6 +17,10 @@ class ReviewService:
         self.dict.make('model/assets/output.csv')
         self.review_dao = ReviewDao()
 
+    def get_reviews(self):
+        return self.review_dao.find_all()
+        
+
     def train(self):
         reviews = self.dict.init()
         pprint(reviews)
