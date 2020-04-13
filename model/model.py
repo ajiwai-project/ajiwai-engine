@@ -39,7 +39,7 @@ class Model:
         for epoch in tqdm(range(epoch_num)):
             epoch_loss = 0.0
             for batch in train_iter:
-                inputs, labels = batch.Text, batch.Label
+                inputs, labels = batch.review, batch.brand_id
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
 
                 self.optimizer.zero_grad()

@@ -24,16 +24,31 @@ class Dict:
         reviews = self.review_repository.find_all()
         reviews_df = [[review[1]['brand_id'], review[1]['text']] for review in reviews]
         reviews_df = pd.DataFrame(reviews_df, columns=['brand_id', 'review'])
+        reviews_df = self.delete_symbols(reviews_df)
 
         tokenizer = BertJapaneseTokenizer.from_pretrained(
             'bert-base-japanese-whole-word-masking')
         TEXT = data.Field(sequential=True, batch_first=True, tokenize=tokenizer.tokenize)
         LABEL = data.Field(sequential=False)
 
-        train_ds = DataFrameDataset(reviews_df, fields={'review': self.TEXT, 'brand_id': self.LABEL})
+        self.train_ds = DataFrameDataset(reviews_df, fields={'review': self.TEXT, 'brand_id': self.LABEL})
 
-        self.TEXT.build_vocab(train_ds)
-        self.LABEL.build_vocab(train_ds)
+        self.TEXT.build_vocab(self.train_ds)
+        self.LABEL.build_vocab(self.train_ds)
+    
+    def delete_symbols(self, df):
+        df['review'] = df['review'].str.replace('\d+年', '', regex=True)
+        df['review'] = df['review'].str.replace('\d+月', '', regex=True)
+        df['review'] = df['review'].str.replace('\d+日', '', regex=True)
+        df['review'] = df['review'].str.replace('\d+', '0', regex=True)
+        for symbol in open('assets/stop_symbols.txt', 'r'):
+            symbol = symbol.replace('\n', '')
+            df['review'] = df['review'].str.replace(symbol, '')
+        return df
+
+
+    def get_train_ds(self):
+        return self.train_ds
 
 
 class DataFrameDataset(data.Dataset):

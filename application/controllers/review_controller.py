@@ -11,9 +11,9 @@ class ReviewController(Resource):
     def __init__(self):
         self.reivew_service = ReviewService()
 
-    def post(self):
+    def get(self):
         self.reivew_service.train()
         return {}, 200
 
 
-api.add_resource(ReviewController, '/reivew/train')
+api.add_resource(ReviewController, '/train')
