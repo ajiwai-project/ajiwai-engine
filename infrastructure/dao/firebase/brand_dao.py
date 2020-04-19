@@ -1,10 +1,10 @@
-from config import db
+from config import firestore_db
 import sys
 
 class BrandDao:
 
     def __init__(self):
-        self.database = db.collection('brands')
+        self.database = firestore_db.collection('brands')
 
     def parse(self):
         return {
