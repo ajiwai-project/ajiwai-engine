@@ -1,8 +1,11 @@
 from json import load
 import argparse
 import pandas as pd
-
 import sys
+import torchtext
+from torchtext.data import Field, Dataset, Example, BucketIterator
+from transformers import BertJapaneseTokenizer
+
 
 def parse_arguments():
     p = argparse.ArgumentParser(description='Hyperparams')
@@ -51,10 +54,29 @@ def delete_symbols(df):
     return df
 
 
+
 if __name__ == '__main__':
     args = parse_arguments()
     reviews_json = load_and_cleaning(args.f)
     reviews_df = json_to_data_frame(reviews_json)
     reviews_df = delete_symbols(reviews_df)
 
-    reviews_df.to_csv(args.o, header=False, index=False)
+    tokenizer = BertJapaneseTokenizer.from_pretrained('bert-base-japanese-whole-word-masking')
+
+    TEXT = Field(sequential=True, batch_first=True, tokenize=tokenizer.tokenize)
+    LABEL = Field(sequential=False)
+
+    train_ds = DataFrameDataset(reviews_df, fields={'review': TEXT, 'brand_id': LABEL})
+
+    TEXT.build_vocab(train_ds)
+    LABEL.build_vocab(train_ds)
+
+    train_iter = BucketIterator(
+        dataset=train_ds,
+        batch_size=4,
+        repeat=False
+    )
+
+    for batch in train_iter:
+        print(batch.review)
+    # reviews_df.to_csv(args.o, header=False, index=False)

@@ -44,6 +44,6 @@ class brandPredictController(Resource):
         return res, 200
 
 
-api.add_resource(brandController, '/brand/<string:brand_id>')
-api.add_resource(brandPredictController, '/brand/predict')
-api.add_resource(brandsController, '/brands')
+api.add_resource(brandController, '/<string:brand_id>')
+api.add_resource(brandPredictController, '/predict')
+api.add_resource(brandsController, '')

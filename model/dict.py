@@ -4,8 +4,7 @@ from transformers import BertJapaneseTokenizer
 import pandas as pd
 
 from model.stop_words import create_stopwords
-from infrastructure.dao.brand_dao import BrandDao
-from infrastructure.dao.review_dao import ReviewDao
+from infrastructure.repositories.review_repository import ReviewRepository
 
 
 class Dict:
@@ -19,23 +18,37 @@ class Dict:
             stop_words=stop_words,
             batch_first=True)
         self.LABEL = data.Field(sequential=False)
-        self.review_dao = ReviewDao()
+        self.review_repository = ReviewRepository()
 
     def init(self):
-        review_docs = self.review_dao.find_all()
-        reviews = [[doc.to_dict()['text'], doc.to_dict()['brand_id']]
-                   for doc in review_docs]
-        df = pd.DataFrame(reviews, columns=['review', 'brand_id'])
+        reviews = self.review_repository.find_all()
+        reviews_df = [[review[1]['brand_id'], review[1]['text']] for review in reviews]
+        reviews_df = pd.DataFrame(reviews_df, columns=['brand_id', 'review'])
+        reviews_df = self.delete_symbols(reviews_df)
 
-    def make(self, input_file='assets/output.csv'):
-        train = data.TabularDataset(
-            path=input_file,
-            format='csv',
-            fields=[('Text', self.TEXT), ('Label', self.LABEL)]
-        )
+        tokenizer = BertJapaneseTokenizer.from_pretrained(
+            'bert-base-japanese-whole-word-masking')
+        TEXT = data.Field(sequential=True, batch_first=True, tokenize=tokenizer.tokenize)
+        LABEL = data.Field(sequential=False)
 
-        self.TEXT.build_vocab(train)
-        self.LABEL.build_vocab(train)
+        self.train_ds = DataFrameDataset(reviews_df, fields={'review': self.TEXT, 'brand_id': self.LABEL})
+
+        self.TEXT.build_vocab(self.train_ds)
+        self.LABEL.build_vocab(self.train_ds)
+    
+    def delete_symbols(self, df):
+        df['review'] = df['review'].str.replace('\d+年', '', regex=True)
+        df['review'] = df['review'].str.replace('\d+月', '', regex=True)
+        df['review'] = df['review'].str.replace('\d+日', '', regex=True)
+        df['review'] = df['review'].str.replace('\d+', '0', regex=True)
+        for symbol in open('model/assets/stop_symbols.txt', 'r'):
+            symbol = symbol.replace('\n', '')
+            df['review'] = df['review'].str.replace(symbol, '')
+        return df
+
+
+    def get_train_ds(self):
+        return self.train_ds
 
 
 class DataFrameDataset(data.Dataset):
