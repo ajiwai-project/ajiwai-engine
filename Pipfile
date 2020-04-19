@@ -24,5 +24,9 @@ transformers = "*"
 mecab-python3 = "*"
 scikit-learn = "*"
 
+[scripts]
+local = "python main.py local"
+dev = "python main.py dev"
+
 [requires]
 python_version = "3.7"

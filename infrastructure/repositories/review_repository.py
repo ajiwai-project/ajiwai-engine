@@ -1,10 +1,17 @@
+import sys
+
 from config import db
 from infrastructure.dao.review_dao import ReviewDao
 
 
 class ReviewRepository:
     def __init__(self):
-        self.review_dao = ReviewDao()
+        args = sys.argv[1]
+        if(args == "local"):
+            # TODO configの値によって呼び出すDaoを変える
+            self.review_dao = ReviewDao()
+        else:
+            self.review_dao = ReviewDao()
 
     def find_all(self):
         return self.review_dao.find_all()
