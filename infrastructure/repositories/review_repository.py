@@ -1,10 +1,17 @@
-from config import db
-from infrastructure.dao.review_dao import ReviewDao
+import sys
+
+from infrastructure.dao.firebase.review_firebase_dao import ReviewFBDao
+from infrastructure.dao.memory.review_memory_dao import ReviewMemoryDao
+
 
 
 class ReviewRepository:
     def __init__(self):
-        self.review_dao = ReviewDao()
+        args = sys.argv[1]
+        if(args == "local"):
+            self.review_dao = ReviewMemoryDao()
+        else:
+            self.review_dao = ReviewFBDao()
 
     def find_all(self):
         return self.review_dao.find_all()

@@ -1,8 +1,4 @@
-from config import db
-from infrastructure.dao.brand_dao import BrandDao
-
-brands_ref = db.collection('brands')
-
+from infrastructure.dao.firebase.brand_dao import BrandDao
 
 class BrandRepository:
     def __init__(self):

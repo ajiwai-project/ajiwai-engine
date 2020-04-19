@@ -3,9 +3,8 @@ from flask_restful import abort, Resource, Api
 import sys
 from pprint import pprint
 
-from config import db
 from infrastructure.repositories.brand_repository import BrandRepository
-from infrastructure.dao.brand_dao import BrandDao
+from infrastructure.dao.firebase.brand_dao import BrandDao
 from application.services.brand_service import BrandService
 
 app = Blueprint('brand', __name__)

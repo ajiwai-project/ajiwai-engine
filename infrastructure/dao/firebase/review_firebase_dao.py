@@ -1,9 +1,9 @@
-from config import db
+from config import firestore_db
 
 
-class ReviewDao:
+class ReviewFBDao:
     def __init__(self):
-        self.database = db.collection('reviews')
+        self.database = firestore_db.collection('reviews')
 
     def find_all(self):
         docs = self.database.get()

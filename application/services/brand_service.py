@@ -7,7 +7,7 @@ from pprint import pprint
 
 from model.model import Model
 from model.dict import Dict
-from infrastructure.dao.brand_dao import BrandDao
+from infrastructure.dao.firebase.brand_dao import BrandDao
 
 
 class BrandService:
