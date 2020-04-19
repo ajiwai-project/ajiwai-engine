@@ -27,6 +27,7 @@ scikit-learn = "*"
 [scripts]
 local = "python main.py local"
 dev = "python main.py dev"
+migrate = "python migrate.py dev"
 
 [requires]
 python_version = "3.7"

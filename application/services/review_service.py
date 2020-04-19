@@ -16,14 +16,13 @@ class ReviewService:
 
     def __init__(self):
         self.dict = Dict()
-        self.dict.init()
-        self.model = Model(len(self.dict.LABEL.vocab))
         self.review_repository = ReviewRepository()
 
     def get_reviews(self):
         return self.review_repository.find_all()
 
     def train(self):
+        self.dict.init()
         train_ds = self.dict.get_train_ds()
         
         train_iter = BucketIterator(
@@ -32,6 +31,7 @@ class ReviewService:
             repeat=False
         )
 
+        self.model = Model(len(self.dict.LABEL.vocab))
         self.model.train(train_iter)
         
         
