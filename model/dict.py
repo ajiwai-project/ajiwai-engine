@@ -41,7 +41,7 @@ class Dict:
         df['review'] = df['review'].str.replace('\d+月', '', regex=True)
         df['review'] = df['review'].str.replace('\d+日', '', regex=True)
         df['review'] = df['review'].str.replace('\d+', '0', regex=True)
-        for symbol in open('assets/stop_symbols.txt', 'r'):
+        for symbol in open('model/assets/stop_symbols.txt', 'r'):
             symbol = symbol.replace('\n', '')
             df['review'] = df['review'].str.replace(symbol, '')
         return df
