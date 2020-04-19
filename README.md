@@ -20,9 +20,14 @@ pipenvをインストールする。
 ## サーバの起動
 
 ```
-$ pipenv shell
-$ python main.py
-(or)
-$ pipenv run python main.py
+(firebaseに接続)
+$ pipenv run dev
+(localのファイルを使用)
+$ python run local
 ```
 
+## レビューデータのマイグレート
+
+```
+$ pipenv run migrate
+```
